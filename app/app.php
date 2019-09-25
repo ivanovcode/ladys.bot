@@ -204,6 +204,7 @@ switch ($app) {
             $tills = $GLOBALS['db']->query("
             SELECT
             t.id,
+            t.type,
             t.name as title,
             IF(tw.id_1c_till IS NULL, 1, 0) AS is_new
             FROM
@@ -343,15 +344,24 @@ switch ($app) {
 
         });
 
-        $router->post('/api/tills/link', function($request) {
+        $router->post('/api/tills/addlink', function($request) {
             $request = $request->getBody();
             $rows = $GLOBALS['db']->query("
                 SELECT t.id, t.name, t.amount FROM 1c_tills t WHERE t.id = '".$request['till_id']."'
             ");
             $rows = $rows->fetch(PDO::FETCH_ASSOC);
-            $GLOBALS['db']->query("INSERT INTO wallets (id, title, balance, cash, sort) VALUES (NULL, '".$rows['name']."', ".$rows['amount'].", 0, NULL)");
+            $GLOBALS['db']->query("INSERT IGNORE INTO wallets (id, title, balance, cash, sort) VALUES (NULL, '".$rows['name']."', ".$rows['amount'].", 0, NULL) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(`id`), `title` = '".$rows['name']."', `balance` = '".$rows['amount']."'") ;
             $id = $GLOBALS['db']->lastInsertId();
             $GLOBALS['db']->query("INSERT INTO `1c_tills.bot_wallets` (id_1c_till, id_bot_wallet, `update`) VALUES ('".$rows['id']."', ".$id.", 1)");
+            return;
+        });
+
+        /* Не удаляем wallet удаляем только связь из за того что могут быть связи да и вооьще это не правильно при скрытии из бота */
+        $router->post('/api/tills/deletelink', function($request) {
+            $request = $request->getBody();
+            $GLOBALS['db']->query("
+                DELETE FROM `1c_tills.bot_wallets` WHERE `id_1c_till` = '".$request['till_id']."'
+            ");
             return;
         });
 

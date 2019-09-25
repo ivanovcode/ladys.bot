@@ -81,3 +81,7 @@ td:last-child, th:last-child {
     background-color: #f05833!important;
     border-bottom: 0px!important;
 }
+
+span[data-mode="delete"] {
+    color:#f05833;
+}
