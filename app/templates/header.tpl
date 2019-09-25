@@ -32,8 +32,8 @@
     <link rel="stylesheet" href="app/assets/components/css/responsive-tables.css">
     <link rel="stylesheet" href="app/assets/components/css/custom-checkbox.css">
 
-    <link rel="stylesheet" href="app/assets/css/common.css?2019">
-    <link rel="stylesheet" href="app/assets/css/list.css">
+    <link rel="stylesheet" href="app/assets/css/common.css?20191">
+    <link rel="stylesheet" href="app/assets/css/list.css?20191">
 </head>
 <body>
     <div class="preloader-wrapper">
